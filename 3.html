@@ -33,6 +33,13 @@
 	<link rel="apple-touch-icon" sizes="72x72" href="images/apple-touch-icon-72x72.png">
 	<link rel="apple-touch-icon" sizes="114x114" href="images/apple-touch-icon-114x114.png">
 
+    <style>
+      #map_canvas {
+        width: 500px;
+        height: 400px;
+      }
+    </style>
+    <script src="http://maps.googleapis.com/maps/api/js?sensor=false"></script>
 </head>
 <body>
 
@@ -49,16 +56,19 @@
 			<h5>You loaded this on 3.html</h5>
 			<hr />
 		</div>
+
 		<div class="one-third column" id="left">
 			<a href="2.html">Previous</a>
 		</div>
 		<div class="one-third column" id="middle">
-			elements that are not on the requested page will be removed, elements not on the current page will be added
+			<div id="map_canvas"></div>
 		</div>
+		<!--
 		<div class="one-third column" id="right">
                     Ajaxify your site with as complex a layout as you like. give it a try... <br /><br />
 		    <a href="http://beezee.github.com/djax.html">http://beezee.github.com/djax.html</a> for docs and more demo
 		</div>
+		-->
 
 	</div><!-- container -->
 

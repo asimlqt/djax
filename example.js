@@ -1,31 +1,35 @@
 jQuery('document').ready(function($) {
-    var transition = function($newEl) {
+    var transition = function($newEl, callback) {
 		var $oldEl = this;      // reference to the DOM element that is about to be replaced
 
-		// ** Simple fadeout/fadein **
-		// $newEl.hide();          // hide the new content before it comes in
-		// $oldEl.fadeOut("slow", function() {
-		//     $oldEl.replaceWith($newEl);
-		//     $newEl.show();
-		//     $newEl.fadeIn("fast");
-		// });
-		
-		// ** Fadeout then slide in **
 		$oldEl.fadeOut('fast', function () {
 			$oldEl.after($newEl);
+            callback();
 
 			$newEl.hide();
-			$newEl.slideDown('slow');
 			$newEl.fadeIn('slow');
-
 			$oldEl.remove();	// removes 'oldEl'
 		});
-
-
     }
 
+    function initMap() {
+        if($('#map_canvas').length) {
+            var map_canvas = document.getElementById('map_canvas');
+            var map_options = {
+              center: new google.maps.LatLng(44.5403, -78.5463),
+              zoom: 8,
+              mapTypeId: google.maps.MapTypeId.ROADMAP
+            }
+            var map = new google.maps.Map(map_canvas, map_options);
+        }
+    }
+    initMap();
+
    $('body').djax('.one-third', [], transition);
+
    $(window).bind('djaxLoad', function(e, params) {
-    console.log($('<div>'+params.response+'</div>'));
-   })
+        if(params.url === '3.html') {
+            initMap();
+        }
+   });
 });

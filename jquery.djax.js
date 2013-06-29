@@ -46,6 +46,7 @@
 		    blockSelector = selector,
 		    excludes = (exceptions && exceptions.length) ? exceptions : [],
 		    replaceBlockWith = (replaceBlockWithFunc) ? replaceBlockWithFunc : $.fn.replaceWith,
+		    customReplaceFunc = (replaceBlockWithFunc) ? true : false,
 			djaxing = false;
 
 		// Ensure that the history is correct when going from 2nd page to 1st
@@ -136,6 +137,15 @@
 				// Set page title as new page title
 				$('title').text($(result).filter('title').text());
 
+				var djaxLoadParams = [{
+					'url' : url,
+					'title' : $(result).filter('title').text(),
+					'response' : response
+				}];
+
+				var numBlocks = 0,
+					blocksRendered = 0;
+
 				// Loop through each block and find new page equivalent
 				blocks.each(function () {
 
@@ -151,7 +161,19 @@
 					
 					if (newBlock.length) {
 						if (block.html() !== newBlock.html()) {
-							replaceBlockWith.call(block, newBlock);
+							if(customReplaceFunc) {
+								numBlocks++;
+								replaceBlockWith.call(block, newBlock, function() {
+									blocksRendered++;
+									if(blocksRendered === numBlocks) {
+										$(window).trigger('djaxLoad', djaxLoadParams);
+										self.triggered = true;
+										self.djaxing = false;
+									}
+								});
+							} else {
+								replaceBlockWith.call(block, newBlock);
+							}
 						}
 					} else {
 						block.remove();
@@ -191,22 +213,14 @@
 
 				});
 
-
-
 				// Trigger djaxLoad event as a pseudo ready()
-				if (!self.triggered) {
-					$(window).trigger(
-						'djaxLoad',
-						[{
-							'url' : url,
-							'title' : $(result).filter('title').text(),
-							'response' : response
-						}]
-					);
+				if (!self.triggered && !customReplaceFunc) {
+					$(window).trigger('djaxLoad', djaxLoadParams);
 					self.triggered = true;
 					self.djaxing = false;
 				}
-			};
+			}; // end replaceBlocks
+
 			$.get(url, function (response) {
 				replaceBlocks(response);
 			}).error(function (response) {
